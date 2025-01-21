@@ -2,7 +2,7 @@ public class Wallet
 {
     public long Id { get; set; } // Id: long 
     public decimal Balance { get; set; } // Balance: decimal
-    public string Currency { get; set; } // Currency: string 
+    public string? Currency { get; set; } // Currency: string | the ? makes currency nullable in order to avoid the console error
 }
 
 

@@ -7,6 +7,14 @@ class Program
 {
     static async Task Main(string[] args)
     {
+        // Ensure the database schema exists
+        using (var context = new AppDbContext())
+        {
+            Console.WriteLine("Ensuring database schema is created...");
+            context.Database.EnsureCreated();
+            Console.WriteLine("Database schema created successfully.");
+        }
+
         Console.WriteLine("Starting Quartz Scheduler...");
 
         // Create a scheduler instance
