@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     }
 }
 
+[Index(nameof(Currency), IsUnique = true)] // Add unique index to Currency
 public class CurrencyRate
 {
     public int Id { get; set; }

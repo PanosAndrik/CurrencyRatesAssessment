@@ -1,4 +1,7 @@
 using Quartz;
+using CurrencyRatesGateway.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Threading.Tasks;
 
@@ -10,14 +13,37 @@ public class UpdateRatesJob : IJob
 
         try
         {
-            // Simulate fetching data and updating the database
+            // Fetch currency rates from the ECB
+            var gateway = new EcbGateway(new System.Net.Http.HttpClient());
+            var rates = await gateway.FetchCurrencyRatesAsync();
+
             using (var dbContext = new AppDbContext())
             {
-                Console.WriteLine("Fetching and updating currency rates...");
-                // Add logic to fetch data from the ECB and update the database
-            }
+                // Ensure the database and table are created
+                Console.WriteLine("Ensuring database and table exist...");
+                dbContext.Database.EnsureCreated();
 
-            Console.WriteLine("UpdateRatesJob completed successfully.");
+                Console.WriteLine("Updating currency rates in the database...");
+
+                foreach (var rate in rates)
+                {
+                    // Use SQLite UPSERT functionality (ON CONFLICT DO UPDATE)
+                    var sql = @"
+                        INSERT INTO CurrencyRates (Currency, Rate)
+                        VALUES (@Currency, @Rate)
+                        ON CONFLICT(Currency)
+                        DO UPDATE SET Rate = excluded.Rate;
+                    ";
+
+                    dbContext.Database.ExecuteSqlRaw(sql, new[]
+                    {
+                        new SqliteParameter("@Currency", rate.Key),
+                        new SqliteParameter("@Rate", rate.Value)
+                    });
+                }
+
+                Console.WriteLine("Currency rates updated successfully.");
+            }
         }
         catch (Exception ex)
         {
