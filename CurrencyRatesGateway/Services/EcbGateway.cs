@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -14,10 +17,18 @@ namespace CurrencyRatesGateway.Services
             _httpClient = httpClient;
         }
 
-        public async Task<XDocument> FetchCurrencyRatesAsync()
+        public async Task<Dictionary<string, decimal>> FetchCurrencyRatesAsync()
         {
             var response = await _httpClient.GetStringAsync(EcbUrl);
-            return XDocument.Parse(response);
+            var xml = XDocument.Parse(response);
+
+            // Parse XML to extract currency rates into a dictionary
+            return xml.Descendants()
+                .Where(node => node.Name.LocalName == "Cube" && node.Attribute("currency") != null)
+                .ToDictionary(
+                    node => node.Attribute("currency").Value, // Currency code
+                    node => decimal.Parse(node.Attribute("rate").Value, CultureInfo.InvariantCulture) // Ensure proper parsing
+                );
         }
     }
 }

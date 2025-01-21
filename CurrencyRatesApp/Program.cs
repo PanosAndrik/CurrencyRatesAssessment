@@ -14,7 +14,12 @@ class Program
         {
             var rates = await gateway.FetchCurrencyRatesAsync();
             Console.WriteLine("Currency Rates:");
-            Console.WriteLine(rates);
+
+            // Iterate through the dictionary and display each currency and its rate
+            foreach (var rate in rates)
+            {
+                Console.WriteLine($"{rate.Key}: {rate.Value}");
+            }
         }
         catch (Exception ex)
         {
