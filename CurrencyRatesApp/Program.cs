@@ -12,18 +12,36 @@ class Program
 
         try
         {
+            // Fetch currency rates
             var rates = await gateway.FetchCurrencyRatesAsync();
-            Console.WriteLine("Currency Rates:");
 
-            // Iterate through the dictionary and display each currency and its rate
-            foreach (var rate in rates)
+            // Save to the database
+            using (var context = new AppDbContext())
             {
-                Console.WriteLine($"{rate.Key}: {rate.Value}");
+                Console.WriteLine("Ensuring database is created...");
+                context.Database.EnsureCreated();
+                Console.WriteLine("Database created.");
+
+                Console.WriteLine("Adding currency rates...");
+                foreach (var rate in rates)
+                {
+                    Console.WriteLine($"Adding: {rate.Key} - {rate.Value}");
+                    context.CurrencyRates.Add(new CurrencyRate
+                    {
+                        Currency = rate.Key,
+                        Rate = rate.Value
+                    });
+                }
+
+                context.SaveChanges();
+                Console.WriteLine("Currency rates saved.");
             }
+
+            Console.WriteLine("Process completed successfully!");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching rates: {ex.Message}");
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 }
