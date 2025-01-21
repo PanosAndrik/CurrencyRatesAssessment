@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyRatesGateway", "Cur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyRatesApp", "CurrencyRatesApp\CurrencyRatesApp.csproj", "{AA93D4EE-7EB0-4F3A-94E3-E60C94232A90}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WalletApi", "WalletApi\WalletApi.csproj", "{F9F1F8FA-A587-4A22-8886-534B522E3178}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{AA93D4EE-7EB0-4F3A-94E3-E60C94232A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA93D4EE-7EB0-4F3A-94E3-E60C94232A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA93D4EE-7EB0-4F3A-94E3-E60C94232A90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9F1F8FA-A587-4A22-8886-534B522E3178}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9F1F8FA-A587-4A22-8886-534B522E3178}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9F1F8FA-A587-4A22-8886-534B522E3178}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9F1F8FA-A587-4A22-8886-534B522E3178}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

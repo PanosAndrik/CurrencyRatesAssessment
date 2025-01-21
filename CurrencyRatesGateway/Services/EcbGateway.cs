@@ -27,7 +27,7 @@ namespace CurrencyRatesGateway.Services
                     && node.Attribute("currency") != null 
                     && node.Attribute("rate") != null)
                 .ToDictionary(
-                    node => node.Attribute("currency")!.Value, // Add `!` to indicate non-null
+                    node => node.Attribute("currency")!.Value, 
                     node => decimal.Parse(node.Attribute("rate")!.Value, CultureInfo.InvariantCulture)
                 );
         }

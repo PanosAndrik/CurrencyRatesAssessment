@@ -7,7 +7,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        // Ensure the database schema exists
+        // checking if db schema exists
         using (var context = new AppDbContext())
         {
             Console.WriteLine("Ensuring database schema is created...");
@@ -17,14 +17,14 @@ class Program
 
         Console.WriteLine("Starting Quartz Scheduler...");
 
-        // Create a scheduler instance
+        // Create a scheduler instance 
         var schedulerFactory = new StdSchedulerFactory();
         var scheduler = await schedulerFactory.GetScheduler();
 
         // Start the scheduler
         await scheduler.Start();
 
-        // Define the job and trigger
+        // Define the job and trigger in order to take rates every min
         var job = JobBuilder.Create<UpdateRatesJob>()
             .WithIdentity("updateRatesJob", "group1")
             .Build();
@@ -33,7 +33,7 @@ class Program
             .WithIdentity("updateRatesTrigger", "group1")
             .StartNow()
             .WithSimpleSchedule(x => x
-                .WithIntervalInMinutes(1) // Run every minute
+                .WithIntervalInMinutes(1) // every minute as asked
                 .RepeatForever())
             .Build();
 
@@ -43,7 +43,7 @@ class Program
         Console.WriteLine("Quartz Scheduler started. Press [Enter] to exit...");
         Console.ReadLine();
 
-        // Shut down the scheduler gracefully
+        
         await scheduler.Shutdown();
         Console.WriteLine("Quartz Scheduler stopped.");
     }

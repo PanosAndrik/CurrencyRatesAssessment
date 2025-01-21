@@ -35,12 +35,12 @@ public class WalletService
         if (string.IsNullOrEmpty(targetCurrency) || wallet.Currency == targetCurrency)
             return wallet.Balance;
 
-        // Perform currency conversion using CurrencyRates
+        
         var rate = _dbContext.CurrencyRates.FirstOrDefault(r => r.Currency == targetCurrency)?.Rate;
         if (rate == null)
             throw new Exception("Target currency not supported");
 
-        return wallet.Balance * (decimal)rate; // Cast rate to decimal
+        return wallet.Balance * (decimal)rate; 
     }
 
     // Adjust wallet balance

@@ -13,7 +13,7 @@ public class UpdateRatesJob : IJob
 
         try
         {
-            // Fetch currency rates from the ECB
+            // currency rates ECB
             var gateway = new EcbGateway(new System.Net.Http.HttpClient());
             var rates = await gateway.FetchCurrencyRatesAsync();
 
@@ -27,7 +27,7 @@ public class UpdateRatesJob : IJob
 
                 foreach (var rate in rates)
                 {
-                    // Use SQLite UPSERT functionality (ON CONFLICT DO UPDATE)
+                
                     var sql = @"
                         INSERT INTO CurrencyRates (Currency, Rate)
                         VALUES (@Currency, @Rate)
