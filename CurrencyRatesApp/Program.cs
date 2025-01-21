@@ -1,47 +1,42 @@
-﻿using CurrencyRatesGateway.Services;
+﻿using Quartz;
+using Quartz.Impl;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 class Program
 {
     static async Task Main(string[] args)
     {
-        var httpClient = new HttpClient();
-        var gateway = new EcbGateway(httpClient);
+        Console.WriteLine("Starting Quartz Scheduler...");
 
-        try
-        {
-            // Fetch currency rates
-            var rates = await gateway.FetchCurrencyRatesAsync();
+        // Create a scheduler instance
+        var schedulerFactory = new StdSchedulerFactory();
+        var scheduler = await schedulerFactory.GetScheduler();
 
-            // Save to the database
-            using (var context = new AppDbContext())
-            {
-                Console.WriteLine("Ensuring database is created...");
-                context.Database.EnsureCreated();
-                Console.WriteLine("Database created.");
+        // Start the scheduler
+        await scheduler.Start();
 
-                Console.WriteLine("Adding currency rates...");
-                foreach (var rate in rates)
-                {
-                    Console.WriteLine($"Adding: {rate.Key} - {rate.Value}");
-                    context.CurrencyRates.Add(new CurrencyRate
-                    {
-                        Currency = rate.Key,
-                        Rate = rate.Value
-                    });
-                }
+        // Define the job and trigger
+        var job = JobBuilder.Create<UpdateRatesJob>()
+            .WithIdentity("updateRatesJob", "group1")
+            .Build();
 
-                context.SaveChanges();
-                Console.WriteLine("Currency rates saved.");
-            }
+        var trigger = TriggerBuilder.Create()
+            .WithIdentity("updateRatesTrigger", "group1")
+            .StartNow()
+            .WithSimpleSchedule(x => x
+                .WithIntervalInMinutes(1) // Run every minute
+                .RepeatForever())
+            .Build();
 
-            Console.WriteLine("Process completed successfully!");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
+        // Schedule the job with the trigger
+        await scheduler.ScheduleJob(job, trigger);
+
+        Console.WriteLine("Quartz Scheduler started. Press [Enter] to exit...");
+        Console.ReadLine();
+
+        // Shut down the scheduler gracefully
+        await scheduler.Shutdown();
+        Console.WriteLine("Quartz Scheduler stopped.");
     }
 }

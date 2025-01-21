@@ -22,12 +22,13 @@ namespace CurrencyRatesGateway.Services
             var response = await _httpClient.GetStringAsync(EcbUrl);
             var xml = XDocument.Parse(response);
 
-            // Parse XML to extract currency rates into a dictionary
             return xml.Descendants()
-                .Where(node => node.Name.LocalName == "Cube" && node.Attribute("currency") != null)
+                .Where(node => node.Name.LocalName == "Cube" 
+                    && node.Attribute("currency") != null 
+                    && node.Attribute("rate") != null)
                 .ToDictionary(
-                    node => node.Attribute("currency").Value, // Currency code
-                    node => decimal.Parse(node.Attribute("rate").Value, CultureInfo.InvariantCulture) // Ensure proper parsing
+                    node => node.Attribute("currency")!.Value, // Add `!` to indicate non-null
+                    node => decimal.Parse(node.Attribute("rate")!.Value, CultureInfo.InvariantCulture)
                 );
         }
     }
